@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+  tsg-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: base
+    volumes:
+      - ./src:/home/node/app/src
+    container_name: tsg-api
+    depends_on:
+      - postgres
+    ports:
+      - '4000:4000'
+    command: 'npm run dev'
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+  postgres:
+    image: postgres:11.2-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: tsg
+    ports:
+      - '54321:5432'
+    volumes:
+      - tsg-db-volume:/var/lib/postgresql/data
+
+volumes:
+  tsg-db-volume:
